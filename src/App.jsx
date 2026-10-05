@@ -1,4 +1,5 @@
 import './App.css'
+import { BrowserRouter, Routes, Route, useLocation } from "react-router";
 import Home from './pages/home.jsx'
 import Category from './pages/category.jsx'
 import Nav from './components/nav.jsx'
@@ -7,46 +8,63 @@ import BackToTop from './components/back-to-top.jsx'
 import ErrorPage from './pages/error-page.jsx'
 import JobList from './pages/job-list.jsx'
 import Carousel from './components/carousel.jsx'
+import About from './pages/about.jsx'
 
-function App() {
-   const currentPath = window.location.pathname.replace(/\/$/, '') || '/'
-   const page = 
-                currentPath === '/' || currentPath === '/index' || currentPath === '/home'
-                  ? <Home />
-                  : currentPath === '/category'
-                    ? <Category />
-                    : currentPath === '/error-page'
-                    ? <ErrorPage />
-                    : currentPath === '/job-list'
-                    ? <JobList />
-                        : null; // Default to Home if no match
+const pageSlides = {
+  home: [
+    { image: '/img/carousel-1.jpg', title: 'Find The Perfect Job That You Deserved', text: '' },
+    { image: '/img/carousel-2.jpg', title: 'Find The Best Startup Job That Fit You', text: '' },
+  ],
+  category: [
+    { image: '/img/carousel-1.jpg', title: 'Browse Job Categories', text: '' },
+    { image: '/img/carousel-2.jpg', title: 'Explore Jobs By Industry', text: '' },
+  ],
+  jobList: [
+    { image: '/img/carousel-1.jpg', title: 'Job Listings', text: '' },
+    { image: '/img/carousel-2.jpg', title: 'Find Your Dream Job', text: '' },
+  ],
+  errorPage: [
+    { image: '/img/carousel-1.jpg', title: 'Error 404', text: '' },
+    { image: '/img/carousel-2.jpg', title: 'Page Not Found', text: '' },
+  ],
+  about: [
+    { image: '/img/carousel-1.jpg', title: 'About Us', text: '' },
+    { image: '/img/carousel-2.jpg', title: 'Our Mission and Vision', text: '' },
+  ],
+}
 
+function Layout() {
+  const { pathname } = useLocation()
 
-       const pageSlides = {
-                              home: [
-                                  { image: '/img/carousel-1.jpg', title: 'Find The Perfect Job That You Deserved', text: 'Home caption one' },
-                                  { image: '/img/carousel-2.jpg', title: 'Find The Best Startup Job That Fit You', text: 'Home caption two' },
-                              ],
-                              category: [
-                                  { image: '/img/carousel-1.jpg', title: 'Browse Job Categories', text: 'Category caption one' },
-                                  { image: '/img/carousel-2.jpg', title: 'Explore Jobs By Industry', text: 'Category caption two' },
-                              ],
-                          }
-
-        const pageKey = currentPath === '/category' ? 'category' : 'home'
-        const slides = pageSlides[pageKey]
-
+  const pageKey =
+    pathname === '/category' ? 'category'
+    : pathname === '/job-list' ? 'jobList'
+    : pathname === '/about' ? 'about'
+    : pathname === '/' ? 'home'
+    : 'errorPage'
 
   return (
-    <>
     <div className="container-xxl bg-light p-0">
       <Nav />
-      <Carousel slides={slides}/>
-      {page}
+      <Carousel slides={pageSlides[pageKey]} />
+      <Routes>
+        <Route path='/' element={<Home />} />
+        <Route path='/category' element={<Category />} />
+        <Route path='/job-list' element={<JobList />} />
+        <Route path='/about' element={<About />} />
+        <Route path='*' element={<ErrorPage />} />
+      </Routes>
       <Footer />
       <BackToTop />
     </div>
-    </>
+  )
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Layout />
+    </BrowserRouter>
   )
 }
 
