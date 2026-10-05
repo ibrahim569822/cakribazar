@@ -1,7 +1,9 @@
+import Category from "../pages/category";
+
 function Nav() {
   return (
        <nav className="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
-            <a href="index.html" className="navbar-brand d-flex align-items-center text-center py-0 px-4 px-lg-5">
+            <a href="/home" className="navbar-brand d-flex align-items-center text-center py-0 px-4 px-lg-5">
                 <h1 className="m-0 text-primary">JobEntry</h1>
             </a>
             <button type="button" className="navbar-toggler me-4">
@@ -14,16 +16,16 @@ function Nav() {
                     <div className="nav-item dropdown">
                         <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">Jobs</a>
                         <div className="dropdown-menu rounded-0 m-0">
-                            <a href="job-list.html" className="dropdown-item">Job List</a>
+                            <a href="/job-list" className="dropdown-item">Job List</a>
                             <a href="job-detail.html" className="dropdown-item">Job Detail</a>
                         </div>
                     </div>
                     <div className="nav-item dropdown">
                         <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
                         <div className="dropdown-menu rounded-0 m-0">
-                            <a href="category.html" className="dropdown-item">Job Category</a>
+                            <a href="/category" className="dropdown-item">Job Category</a>
                             <a href="testimonial.html" className="dropdown-item">Testimonial</a>
-                            <a href="404.html" className="dropdown-item">404</a>
+                            <a href="/error-page" className="dropdown-item">404</a>
                         </div>
                     </div>
                     <a href="contact.html" className="nav-item nav-link">Contact</a>
