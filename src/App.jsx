@@ -13,23 +13,18 @@ import About from './pages/about.jsx'
 const pageSlides = {
   home: [
     { image: '/img/carousel-1.jpg', title: 'Find The Perfect Job That You Deserved', text: '' },
-    { image: '/img/carousel-2.jpg', title: 'Find The Best Startup Job That Fit You', text: '' },
   ],
   category: [
     { image: '/img/carousel-1.jpg', title: 'Browse Job Categories', text: '' },
-    { image: '/img/carousel-2.jpg', title: 'Explore Jobs By Industry', text: '' },
   ],
   jobList: [
     { image: '/img/carousel-1.jpg', title: 'Job Listings', text: '' },
-    { image: '/img/carousel-2.jpg', title: 'Find Your Dream Job', text: '' },
   ],
   errorPage: [
     { image: '/img/carousel-1.jpg', title: 'Error 404', text: '' },
-    { image: '/img/carousel-2.jpg', title: 'Page Not Found', text: '' },
   ],
   about: [
     { image: '/img/carousel-1.jpg', title: 'About Us', text: '' },
-    { image: '/img/carousel-2.jpg', title: 'Our Mission and Vision', text: '' },
   ],
 }
 
