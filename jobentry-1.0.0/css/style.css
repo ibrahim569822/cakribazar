@@ -391,3 +391,9 @@
     padding-right: 0;
     border-right: none;
 }
+textarea {
+  white-space: pre-wrap!important;
+}
+.description {
+  white-space: pre-wrap!important;
+}

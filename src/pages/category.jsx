@@ -1,20 +1,18 @@
 import React from 'react';
-
+import axios from '../Lib/axios.js';
 function Category() {
 
     const [categories, setCategories] = React.useState([]);
 
   function fetchCategories() {
-    fetch('http://localhost/cakribazar/category/index.php')
-      .then(response => response.json())
-      .then(data => setCategories(data.data))
-      .catch(error => console.error('Error fetching categories:', error));
-  }
+  axios.get('http://localhost/cakribazar/category/index.php')
+    .then(response => setCategories(response.data.data))
+    .catch(error => console.error('Error fetching categories:', error));
+}
 
-  React.useEffect(() => {
-    fetchCategories();
-  }
-, [categories]);
+React.useEffect(() => {
+  fetchCategories();
+}, []);
 
     return (
         <div className="container-xxl py-5">

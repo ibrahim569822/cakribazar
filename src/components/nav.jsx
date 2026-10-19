@@ -1,5 +1,6 @@
-import Category from "../pages/category";
+
 import { Link } from 'react-router'
+
 function Nav() {
   return (
        <nav className="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
@@ -13,11 +14,12 @@ function Nav() {
                 <div className="navbar-nav ms-auto p-4 p-lg-0">
                     <Link to="/" className="nav-item nav-link active">Home</Link>
                     <Link to="/about" className="nav-item nav-link">About</Link>
+                    <Link to="/companies" className="nav-item nav-link">Companies</Link>
                     <div className="nav-item dropdown">
                         <Link to="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">Jobs</Link>
                         <div className="dropdown-menu rounded-0 m-0">
                             <Link to="/job-list" className="dropdown-item">Job List</Link>
-                            <Link to="/job-detail" className="dropdown-item">Job Detail</Link>
+                            <Link to="/job-details" className="dropdown-item">Job Detail</Link>
                         </div>
                     </div>
                     <div className="nav-item dropdown">
@@ -30,7 +32,7 @@ function Nav() {
                     </div>
                     <Link to="contact.html" className="nav-item nav-link">Contact</Link>
                 </div>
-                <Link to="" className="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block">Post A Job<i className="fa fa-arrow-right ms-3"></i></Link>
+                <Link to="/profile" className="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block">Profile<i className="fa fa-arrow-right ms-3"></i></Link>
             </div>
         </nav>
   );

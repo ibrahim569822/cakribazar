@@ -1,0 +1,325 @@
+import {useState, useEffect} from 'react';
+import { Link } from 'react-router';
+import axios from '../Lib/axios.js';
+function Profile() {
+   const [activeTab, setActiveTab] = useState('overview');
+   const userData = JSON.parse(localStorage.getItem("userdata"));
+
+   const [profileData, setProfileData] = useState({});
+    const fetchProfileData = async () => {
+        try {
+            const response = await axios.get(`profile/single.php?id=${userData.id}`);
+            setProfileData(response.data[0].data[0]);
+            // console.log('Profile data fetched:', response.data[0].data[0].image);
+        } catch (error) {
+            console.error('Error fetching profile data:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchProfileData();
+    }, []);
+
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+
+    const id = profileData?.user_id;
+    let url = '';
+    
+    if (id) {
+        url = 'profile/update.php?id=' + id;
+    } else {
+        url = 'profile/create.php';
+    }
+    let response = await axios.post(url, formData);
+    };
+    
+    return (
+        <>
+            <section className="section profile">
+                <div className="row">
+                    <div className="col-xl-4">
+
+                    <div className="card">
+                        <div className="card-body profile-card pt-4 d-flex flex-column align-items-center">
+
+                            <img src={ `${import.meta.env.VITE_API_URL}/${profileData?.image}` || '/img/profile-img.jpg' } alt="Edit Profile" className="rounded-circle" />
+                            <h1>{userData.name || 'Kevin Anderson'}</h1>
+                            <p className="small fst-italic">{profileData?.job_title || 'Edit Profile'}</p>
+                            <p><span><i className="bi bi-envelope"></i></span> {userData.email || 'Not Found'}</p>
+                            <p><span><i className="bi bi-telephone"></i></span> {userData.contact || 'Not Found'}</p>
+                            <div className="social-links mt-2">
+                                <a href={profileData?.twitter || '#'} className="twitter"><i className="bi bi-twitter"></i></a>
+                                <a href={profileData?.linkedin || '#'} className="linkedin"><i className="bi bi-linkedin"></i></a>
+                            </div>
+                            <div className="social-links mt-5">
+                                <Link className="dropdown-item d-flex align-items-center" to="/logout">
+                                <i className="bi bi-box-arrow-right"></i>
+                                <span className="ms-2">Sign Out</span>
+                                </Link>
+                            </div>
+                            
+                        </div>
+                        
+                    </div>
+
+                    </div>
+
+                    <div className="col-xl-8">
+
+                    <div className="card">
+                        <div className="card-body pt-3">
+                        <ul className="nav nav-tabs nav-tabs-bordered">
+
+                            <li className="nav-item">
+                            <button className={activeTab === 'overview' ? 'nav-link active' : 'nav-link'} data-bs-toggle="tab" data-bs-target="#profile-overview" onClick={() => setActiveTab('overview')}>Overview</button>
+                            </li>
+
+                            <li className="nav-item">
+                            <button className={activeTab === 'edit' ? 'nav-link active' : 'nav-link'} data-bs-toggle="tab" data-bs-target="#profile-edit" onClick={() => setActiveTab('edit')}>Edit Profile</button>
+                            </li>
+
+                            <li className="nav-item">
+                            <button className={activeTab === 'settings' ? 'nav-link active' : 'nav-link'} data-bs-toggle="tab" data-bs-target="#profile-settings" onClick={() => setActiveTab('settings')}>Settings</button>
+                            </li>
+
+                            <li className="nav-item">
+                            <button className={activeTab === 'change-password' ? 'nav-link active' : 'nav-link'} data-bs-toggle="tab" data-bs-target="#profile-change-password" onClick={() => setActiveTab('change-password')}>Change Password</button>
+                            </li>
+
+                        </ul>
+                        <div className="tab-content pt-2">
+                            {activeTab === 'overview' && (
+                            <div className="tab-pane fade show active profile-overview" id="profile-overview">
+                            
+                                <h5 className="card-title">Profile Details</h5>
+                                <div className="row">
+                                    <div className="col-lg-3 col-md-4 label ">User Id</div>
+                                    <div className="col-lg-9 col-md-8">{userData.id || 'Null'}</div>
+                                </div>
+
+                                <div className="row">
+                                    <div className="col-lg-3 col-md-4 label ">Full Name</div>
+                                    <div className="col-lg-9 col-md-8">{userData.name || 'Kevin Anderson'}</div>
+                                </div>
+
+                                <div className="row">
+                                    <div className="col-lg-3 col-md-4 label">Summary</div>
+                                    <div className="col-lg-9 col-md-8">{profileData?.summary || 'Edit Profile'}</div>
+                                </div>
+
+                                <div className="row">
+                                    <div className="col-lg-3 col-md-4 label">Job</div>
+                                    <div className="col-lg-9 col-md-8">{profileData?.job_title || 'Edit Profile'}</div>
+                                </div>
+
+                                <div className="row">
+                                    <div className="col-lg-3 col-md-4 label">Country</div>
+                                    <div className="col-lg-9 col-md-8">{profileData?.country || 'Edit Profile'}</div>
+                                </div>
+
+                                <div className="row">
+                                    <div className="col-lg-3 col-md-4 label">Address</div>
+                                    <div className="col-lg-9 col-md-8">{profileData?.address || 'Edit Profile'}</div>
+                                </div>
+
+                                <div className="row">
+                                    <div className="col-lg-3 col-md-4 label">Phone</div>
+                                    <div className="col-lg-9 col-md-8">{userData.contact || 'Not Found'}</div>
+                                </div>
+
+                                <div className="row">
+                                    <div className="col-lg-3 col-md-4 label">Email</div>
+                                    <div className="col-lg-9 col-md-8">{userData.email || 'Not Found'}</div>
+                                </div>
+
+                            </div>
+                            )}
+                            {activeTab === 'edit' && (
+                            <div className="tab-pane fade show active" id="profile-edit">
+
+                                <form encType="multipart/form-data" onSubmit={handleSubmit}>
+                                    <div className="row mb-3">
+                                    <label htmlFor="profileImage" className="col-md-4 col-lg-3 col-form-label">Profile Image</label>
+                                    <div className="col-md-8 col-lg-9">
+                                        <img src={ `${import.meta.env.VITE_API_URL}/${profileData?.image}` || 'img/profile-img.jpg' } alt="Edit Profile" className="img-thumbnail" height="100" width='100' />
+                                        <div className="pt-2">
+                                        <input type="file" name="image" className="" id="profileImage" />
+                                        <a href="#" className="btn btn-danger btn-sm" title="Remove my profile image"><i className="bi bi-trash"></i></a>
+                                        </div>
+                                    </div>
+                                    </div>
+
+                                    <input type="hidden" name="user_id" value={userData.id} />
+
+                                    <div className="row mb-3">
+                                    <label htmlFor="full_name" className="col-md-4 col-lg-3 col-form-label">Full Name</label>
+                                    <div className="col-md-8 col-lg-9">
+                                        <input disabled name="name" type="text" className="form-control" id="full_name" defaultValue={userData.name || ''} />
+                                    </div>
+                                    </div>
+
+                                    <div className="row mb-3">
+                                    <label htmlFor="job_title" className="col-md-4 col-lg-3 col-form-label">Job Title</label>
+                                    <div className="col-md-8 col-lg-9">
+                                        <input name="job_title" type="text" className="form-control" id="job_title" defaultValue={profileData?.job_title || ''} />
+                                    </div>
+                                    </div>
+
+                                    <div className="row mb-3">
+                                    <label htmlFor="date_of_birth" className="col-md-4 col-lg-3 col-form-label">Date of Birth</label>
+                                    <div className="col-md-8 col-lg-9">
+                                        <input name="date_of_birth" type="date" className="form-control" id="date_of_birth" defaultValue={profileData?.date_of_birth || ''} />
+                                    </div>
+                                    </div>
+
+
+                                    <div className="row mb-3">
+                                    <label htmlFor="gender" className="col-md-4 col-lg-3 col-form-label">Gender</label>
+                                    <div className="col-md-8 col-lg-9">
+                                        <select name="gender" className="form-control bg-light" id="gender" defaultValue={profileData?.gender || ''}>
+                                            <option value="">Select Gender</option>
+                                            <option value="1">Male</option>
+                                            <option value="2">Female</option>
+                                            <option value="3">Other</option>
+                                        </select>
+                                    </div>
+                                    </div>
+
+
+                                    <div className="row mb-3">
+                                    <label htmlFor="about" className="col-md-4 col-lg-3 col-form-label">Summary</label>
+                                    <div className="col-md-8 col-lg-9">
+                                        <textarea name="summary" className="form-control" id="about" style={{ height: '100px' }} defaultValue={profileData?.summary || ''}>
+                                        
+                                        </textarea>
+                                    </div>
+                                    </div>
+
+                                    <div className="row mb-3">
+                                    <label htmlFor="address" className="col-md-4 col-lg-3 col-form-label">Address</label>
+                                    <div className="col-md-8 col-lg-9">
+                                        <input name="address" type="text" className="form-control" id="address" defaultValue={profileData?.address || ''} />
+                                    </div>
+                                    </div>
+
+                                    <div className="row mb-3">
+                                    <label htmlFor="country" className="col-md-4 col-lg-3 col-form-label">Country</label>
+                                    <div className="col-md-8 col-lg-9">
+                                        <input name="country" type="text" className="form-control" id="country" defaultValue={profileData?.country || ''} />
+                                    </div>
+                                    </div>
+
+                                    <div className="row mb-3">
+                                    <label htmlFor="Twitter" className="col-md-4 col-lg-3 col-form-label">Twitter Profile</label>
+                                    <div className="col-md-8 col-lg-9">
+                                        <input name="twitter" type="text" className="form-control" id="Twitter" defaultValue={profileData?.twitter || ''} />
+                                    </div>
+                                    </div>
+
+                                    <div className="row mb-3">
+                                    <label htmlFor="Linkedin" className="col-md-4 col-lg-3 col-form-label">Linkedin Profile</label>
+                                    <div className="col-md-8 col-lg-9">
+                                        <input name="linkedin" type="text" className="form-control" id="Linkedin" defaultValue={profileData?.linkedin || ''} />
+                                    </div>
+                                    </div>
+
+                                    <div className="text-center">
+                                    <button type="submit" className="btn btn-primary">Save Changes</button>
+                                    </div>
+                                </form>
+
+                            </div>
+                            )}
+                            {activeTab === 'settings' && (
+                            <div className="tab-pane fade pt-3 show active" id="profile-settings">
+
+  
+                                <form>
+
+                                    <div className="row mb-3">
+                                    <label htmlFor="fullName" className="col-md-4 col-lg-3 col-form-label">Email Notifications</label>
+                                    <div className="col-md-8 col-lg-9">
+                                        <div className="form-check">
+                                        <input className="form-check-input" type="checkbox" id="changesMade" checked />
+                                        <label className="form-check-label" htmlFor="changesMade">
+                                            Changes made to your account
+                                        </label>
+                                        </div>
+                                        <div className="form-check">
+                                        <input className="form-check-input" type="checkbox" id="newProducts" checked />
+                                        <label className="form-check-label" htmlFor="newProducts">
+                                                Information on new products and services
+                                        </label>
+                                        </div>
+                                        <div className="form-check">
+                                        <input className="form-check-input" type="checkbox" id="proOffers" />
+                                        <label className="form-check-label" htmlFor="proOffers">
+                                            Marketing and promo offers
+                                        </label>
+                                        </div>
+                                        <div className="form-check">
+                                        <input className="form-check-input" type="checkbox" id="securityNotify" checked disabled /> 
+                                        <label className="form-check-label" htmlFor="securityNotify">
+                                            Security alerts
+                                        </label>
+                                        </div>
+                                    </div>
+                                    </div>
+
+                                    <div className="text-center">
+                                    <button type="submit" className="btn btn-primary">Save Changes</button>
+                                    </div>
+                                </form>
+
+                            </div>
+                            )}
+                            {activeTab === 'change-password' && (
+                            <div className="tab-pane fade pt-3 show active" id="profile-change-password">
+                                    <form>
+
+                                        <div className="row mb-3">
+                                        <label htmlFor="currentPassword" className="col-md-4 col-lg-3 col-form-label">Current Password</label>
+                                        <div className="col-md-8 col-lg-9">
+                                            <input name="password" type="password" className="form-control" id="currentPassword" />
+                                        </div>
+                                        </div>
+
+                                        <div className="row mb-3">
+                                        <label htmlFor="newPassword" className="col-md-4 col-lg-3 col-form-label">New Password</label>
+                                        <div className="col-md-8 col-lg-9">
+                                            <input name="newpassword" type="password" className="form-control" id="newPassword" />
+                                        </div>
+                                        </div>
+
+                                        <div className="row mb-3">
+                                        <label htmlFor="renewPassword" className="col-md-4 col-lg-3 col-form-label">Re-enter New Password</label>
+                                        <div className="col-md-8 col-lg-9">
+                                            <input name="renewpassword" type="password" className="form-control" id="renewPassword" />
+                                        </div>
+                                        </div>
+
+                                        <div className="text-center">
+                                        <button type="submit" className="btn btn-primary">Change Password</button>
+                                        </div>
+                                    </form>
+
+                            </div>
+                            )}
+
+                        </div>
+
+                        </div>
+                    </div>
+
+                    </div>
+                </div>
+            </section>
+
+         </>
+         );
+}
+
+export default Profile;

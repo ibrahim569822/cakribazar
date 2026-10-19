@@ -9,6 +9,14 @@ import ErrorPage from './pages/error-page.jsx'
 import JobList from './pages/job-list.jsx'
 import Carousel from './components/carousel.jsx'
 import About from './pages/about.jsx'
+import Companies from './pages/companies.jsx'
+import JobDetails from './pages/job-details.jsx'
+import LogIn from './pages/login.jsx'
+import Register from './pages/register.jsx'
+import Protected from './Auth/protected.jsx'
+import Profile from './pages/profile.jsx'
+import Logout from './Auth/logout.jsx'
+import { useState } from 'react'  
 
 const pageSlides = {
   home: [
@@ -26,16 +34,33 @@ const pageSlides = {
   about: [
     { image: '/img/carousel-1.jpg', title: 'About Us', text: '' },
   ],
+  companies: [
+    { image: '/img/carousel-1.jpg', title: 'Companies', text: '' },
+  ],
+  JobDetails: [
+    { image: '/img/carousel-1.jpg', title: 'Job Details', text: '' },
+  ],
 }
 
 function Layout() {
   const { pathname } = useLocation()
+  const [ isSignedIn, setIsSignedIn ] = useState(()=> {
+    /* if you want, user will be logged in until they logout*/
+    return localStorage.getItem("access_token") == 'undefined' || localStorage.getItem("access_token") == null ? false : true;
+    /* if you want, user will be logged when they close the browser*/
+    //return sessionStorage.getItem("access_token") || false;
+  });
 
   const pageKey =
     pathname === '/category' ? 'category'
     : pathname === '/job-list' ? 'jobList'
     : pathname === '/about' ? 'about'
+    : pathname === '/companies' ? 'companies'
+    : pathname.startsWith('/job-details/') ? 'JobDetails'
     : pathname === '/' ? 'home'
+    : pathname === '/login' ? 'home'
+    : pathname === '/register' ? 'home'
+    : pathname === '/profile' ? 'home'
     : 'errorPage'
 
   return (
@@ -43,11 +68,19 @@ function Layout() {
       <Nav />
       <Carousel slides={pageSlides[pageKey]} />
       <Routes>
-        <Route path='/' element={<Home />} />
-        <Route path='/category' element={<Category />} />
-        <Route path='/job-list' element={<JobList />} />
-        <Route path='/about' element={<About />} />
-        <Route path='*' element={<ErrorPage />} />
+        <Route path='/login' element={<LogIn />} />
+        <Route path='/register' element={<Register />} />
+        <Route element={<Protected isSignedIn={isSignedIn} />}>
+          <Route path='/' element={<Home />} />
+          <Route path='/profile' element={<Profile />} />
+          <Route path='/category' element={<Category />} />
+          <Route path='/job-list' element={<JobList />} />
+          <Route path='/about' element={<About />} />
+          <Route path='/companies' element={<Companies />} />
+          <Route path='/job-details/:id' element={<JobDetails />} />
+          <Route path='*' element={<ErrorPage />} />
+        </Route>
+        <Route path='/logout' element={<Logout />} />
       </Routes>
       <Footer />
       <BackToTop />
