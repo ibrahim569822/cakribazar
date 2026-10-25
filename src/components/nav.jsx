@@ -19,7 +19,7 @@ function Nav() {
                         <Link to="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">Jobs</Link>
                         <div className="dropdown-menu rounded-0 m-0">
                             <Link to="/job-list" className="dropdown-item">Job List</Link>
-                            <Link to="/job-details" className="dropdown-item">Job Detail</Link>
+                            
                         </div>
                     </div>
                     <div className="nav-item dropdown">

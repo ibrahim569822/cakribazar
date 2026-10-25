@@ -15,6 +15,7 @@ import LogIn from './pages/login.jsx'
 import Register from './pages/register.jsx'
 import Protected from './Auth/protected.jsx'
 import Profile from './pages/profile.jsx'
+import Resume from './pages/resume.jsx'
 import Logout from './Auth/logout.jsx'
 import { useState } from 'react'  
 
@@ -61,18 +62,21 @@ function Layout() {
     : pathname === '/login' ? 'home'
     : pathname === '/register' ? 'home'
     : pathname === '/profile' ? 'home'
+    : pathname === '/resume' ? 'home'
     : 'errorPage'
+  const showCarousel = pathname !== '/profile' && pathname !== '/resume'
 
   return (
     <div className="container-xxl bg-light p-0">
       <Nav />
-      <Carousel slides={pageSlides[pageKey]} />
+      {showCarousel && <Carousel slides={pageSlides[pageKey]} />}
       <Routes>
         <Route path='/login' element={<LogIn />} />
         <Route path='/register' element={<Register />} />
         <Route element={<Protected isSignedIn={isSignedIn} />}>
           <Route path='/' element={<Home />} />
           <Route path='/profile' element={<Profile />} />
+          <Route path='/resume' element={<Resume />} />
           <Route path='/category' element={<Category />} />
           <Route path='/job-list' element={<JobList />} />
           <Route path='/about' element={<About />} />

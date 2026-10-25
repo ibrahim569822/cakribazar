@@ -56,7 +56,7 @@ React.useEffect(() => {
                                         <div className="d-flex mb-3">
                                             <a className="btn btn-light btn-square me-3" href=""><i className="far fa-heart text-primary"></i></a>
                                             <Link className="btn btn-primary" to={`/job-details/${job.id}`}>
-                                                Apply Now
+                                                Job Details
                                             </Link>
                                         </div>
                                         <small className="text-truncate"><i className="far fa-calendar-alt text-primary me-2"></i>Deadline: {job.deadline}</small>

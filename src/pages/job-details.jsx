@@ -4,10 +4,23 @@ import { Link, useParams } from 'react-router';
 
 function JobDetails() {
     let {id} = useParams();
+    const [application, setApplication] = React.useState(false);
     const [job, setJob] = React.useState({});
     const [company, setCompany] = React.useState({});
     const userData = JSON.parse(localStorage.getItem('userdata'));
-
+    
+    const fetchApplication = async () => {
+        try {
+      const res = await axios.get('/applications/find_seeker_application.php?seeker_id=' + JSON.parse(localStorage.getItem("userdata")).id + '&job_id='+id);
+      setApplication(res.data || 0);
+      
+    } catch (error) {
+      console.error("Error fetching applications:", error);
+    }
+    };
+    React.useEffect(() => {
+        fetchApplication();
+    }, []);
     const fetchJob = async () => {
         let res = await axios.get('jobs/single.php?id=' + id);
         setJob(res?.data?.data[0]);
@@ -27,6 +40,7 @@ function JobDetails() {
                     'Content-Type': 'multipart/form-data'
                 }
             });
+            setApplication(res.data || 0);
             console.log(res);
         } catch (error) {
             console.error('Error submitting application:', error);
@@ -79,10 +93,18 @@ function JobDetails() {
                                     <div className="col-12">
                                         <textarea name="cover_letter" className="form-control" rows="5" placeholder="Coverletter"></textarea>
                                     </div>
+                                    
                                     <div className="col-12">
+                                       
                                         
-                                        <button className="btn btn-primary w-100" type="submit">Apply Now</button>
+                                            <button disabled={application} className="btn btn-primary w-100" type="submit">
+                                                {application ? 'Already applied': 'Apply Now'}
+                                                
+                                            </button>
+                                
+                                        
                                     </div>
+                                    
                                 </div>
                             </form>
                         </div>
