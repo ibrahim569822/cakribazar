@@ -72,9 +72,19 @@ function JobDetails() {
 
                         <div className="mb-5">
                             <h4 className="mb-3 description">Job Description</h4>
-                            <p>{job.description}</p>
-                            <h4 className="mb-3 description">Requirements</h4>
-                            <p>{job.requirements}</p>
+                            <p style={{ whiteSpace: 'pre-line' }}>{job.description}</p>
+                            {job.requirements && (
+                                <>
+                                    <h4 className="mb-3 description">Requirements</h4>
+                                    <p style={{ whiteSpace: 'pre-line' }}>{job.requirements}</p>
+                                </>
+                            )}
+                            {job.education_requirement && (
+                                <>
+                                    <h4 className="mb-3 description">Education Requirement</h4>
+                                    <p style={{ whiteSpace: 'pre-line' }}>{job.education_requirement}</p>
+                                </>
+                            )}
                         </div>
         
                         <div className="">

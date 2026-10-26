@@ -17,7 +17,7 @@ const historyFields = {
         { name: 'start_date', label: 'Start date', type: 'date', required: true },
         { name: 'end_date', label: 'End date', type: 'date' },
         { name: 'is_current', label: 'I currently work here', type: 'checkbox' },
-        { name: 'description', label: 'Description', type: 'textarea' },
+        { name: 'description', label: 'Description', type: 'textarea', help: 'Write each responsibility or achievement on a new line.' },
     ],
 };
 
@@ -129,7 +129,7 @@ function HistorySection({ type }) {
                                     <small className="text-muted">
                                         {item.start_date} – {Number(item.is_current) ? 'Present' : item.end_date || 'Not specified'}
                                     </small>
-                                    {item.description && <p className="mb-0 mt-2">{item.description}</p>}
+                                    {item.description && <p className="mb-0 mt-2" style={{ whiteSpace: 'pre-line' }}>{item.description}</p>}
                                 </>
                             )}
                         </div>
@@ -161,14 +161,17 @@ function HistorySection({ type }) {
                             <div className="mb-3" key={field.name}>
                                 <label className="form-label" htmlFor={`${type}-${field.name}`}>{field.label}</label>
                                 {field.type === 'textarea' ? (
-                                    <textarea
-                                        className="form-control"
-                                        id={`${type}-${field.name}`}
-                                        name={field.name}
-                                        rows="3"
-                                        value={draft[field.name] || ''}
-                                        onChange={(event) => updateDraft(field.name, event.target.value)}
-                                    />
+                                    <>
+                                        <textarea
+                                            className="form-control"
+                                            id={`${type}-${field.name}`}
+                                            name={field.name}
+                                            rows="3"
+                                            value={draft[field.name] || ''}
+                                            onChange={(event) => updateDraft(field.name, event.target.value)}
+                                        />
+                                        {field.help && <small className="form-text text-muted">{field.help}</small>}
+                                    </>
                                 ) : (
                                     <input
                                         className="form-control"
@@ -193,6 +196,102 @@ function HistorySection({ type }) {
                         <button type="button" className="btn btn-outline-secondary" onClick={() => setDraft(null)}>Cancel</button>
                     </div>
                 </form>
+            )}
+        </div>
+    );
+}
+
+function SkillsSection() {
+    const [skills, setSkills] = useState([]);
+    const [skillName, setSkillName] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState('');
+
+    useEffect(() => {
+        let active = true;
+        axios.get('/profile/skills.php')
+            .then((response) => {
+                if (active) setSkills(response.data.data || []);
+            })
+            .catch((requestError) => {
+                if (active) setError(requestError.response?.data?.message || 'Unable to load skills.');
+            })
+            .finally(() => {
+                if (active) setLoading(false);
+            });
+
+        return () => {
+            active = false;
+        };
+    }, []);
+
+    const addSkill = async (event) => {
+        event.preventDefault();
+        setSaving(true);
+        setError('');
+        try {
+            const formData = new FormData();
+            formData.set('name', skillName);
+            const response = await axios.post('/profile/skills.php', formData);
+            const savedSkill = response.data.data;
+            setSkills((currentSkills) => currentSkills.some((skill) => String(skill.id) === String(savedSkill.id))
+                ? currentSkills
+                : [...currentSkills, savedSkill]);
+            setSkillName('');
+        } catch (requestError) {
+            setError(requestError.response?.data?.message || 'Unable to add skill.');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const removeSkill = async (skill) => {
+        setError('');
+        try {
+            await axios.delete('/profile/skills.php', { params: { id: skill.id } });
+            setSkills((currentSkills) => currentSkills.filter((currentSkill) => String(currentSkill.id) !== String(skill.id)));
+        } catch (requestError) {
+            setError(requestError.response?.data?.message || 'Unable to remove skill.');
+        }
+    };
+
+    return (
+        <div className="tab-pane fade show active">
+            <h5 className="card-title">Skills</h5>
+            {error && <div className="alert alert-danger" role="alert">{error}</div>}
+            {loading ? <p>Loading skills...</p> : (
+                <>
+                    {skills.length === 0
+                        ? <p className="text-muted">No skills added yet.</p>
+                        : (
+                            <ul className="list-group mb-3">
+                                {skills.map((skill) => (
+                                    <li className="list-group-item d-flex justify-content-between align-items-center" key={skill.id}>
+                                        {skill.name}
+                                        <button type="button" className="btn btn-outline-danger btn-sm" onClick={() => removeSkill(skill)}>
+                                            Remove
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    <form onSubmit={addSkill} className="d-flex gap-2">
+                        <input
+                            className="form-control"
+                            type="text"
+                            aria-label="Skill name"
+                            maxLength="60"
+                            placeholder="e.g. Communication"
+                            value={skillName}
+                            onChange={(event) => setSkillName(event.target.value)}
+                            required
+                        />
+                        <button type="submit" className="btn btn-primary text-nowrap" disabled={saving}>
+                            {saving ? 'Adding...' : 'Add Skill'}
+                        </button>
+                    </form>
+                </>
             )}
         </div>
     );
@@ -301,6 +400,9 @@ function Profile() {
                             </li>
                             <li className="nav-item">
                             <button className={activeTab === 'experience' ? 'nav-link active' : 'nav-link'} onClick={() => setActiveTab('experience')}>Experience</button>
+                            </li>
+                            <li className="nav-item">
+                            <button className={activeTab === 'skills' ? 'nav-link active' : 'nav-link'} onClick={() => setActiveTab('skills')}>Skills</button>
                             </li>
                             <li className="nav-item">
                             <button className={activeTab === 'applied' ? 'nav-link active' : 'nav-link'} data-bs-toggle="tab" data-bs-target="#profile-applied" onClick={() => setActiveTab('applied')}>Applied Jobs</button>
@@ -477,6 +579,7 @@ function Profile() {
                             )}
                             {activeTab === 'education' && <HistorySection type="education" />}
                             {activeTab === 'experience' && <HistorySection type="experience" />}
+                            {activeTab === 'skills' && <SkillsSection />}
                             {activeTab === 'applied' && (
                             <div className="tab-pane fade pt-3 show active" id="profile-applied">
                                 <AppliedJobs />

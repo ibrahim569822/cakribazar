@@ -114,6 +114,20 @@
     line-height: 1.65;
 }
 
+.resume-preserve-lines {
+    white-space: pre-line;
+}
+
+.resume-skills {
+    margin: 0;
+    padding-left: 1.25rem;
+    columns: 2;
+}
+
+.history-description {
+    white-space: pre-line;
+}
+
 .resume-personal-details {
     display: flex;
     flex-direction: column;

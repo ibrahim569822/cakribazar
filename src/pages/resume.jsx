@@ -8,6 +8,7 @@ function Resume() {
     const [profile, setProfile] = useState({});
     const [education, setEducation] = useState([]);
     const [experience, setExperience] = useState([]);
+    const [skills, setSkills] = useState([]);
     const [loading, setLoading] = useState(() => Boolean(userData?.id));
     const [error, setError] = useState(() => userData?.id ? '' : 'Please sign in again to view your resume.');
 
@@ -16,16 +17,18 @@ function Resume() {
 
         const loadResume = async () => {
             try {
-                const [profileResponse, educationResponse, experienceResponse] = await Promise.all([
+                const [profileResponse, educationResponse, experienceResponse, skillsResponse] = await Promise.all([
                     axios.get(`profile/single.php?id=${userData.id}`),
                     axios.get('/profile/history.php', { params: { type: 'education' } }),
                     axios.get('/profile/history.php', { params: { type: 'experience' } }),
+                    axios.get('/profile/skills.php'),
                 ]);
 
                 if (active) {
                     setProfile(profileResponse.data[0]?.data?.[0] || {});
                     setEducation(educationResponse.data.data || []);
                     setExperience(experienceResponse.data.data || []);
+                    setSkills(skillsResponse.data.data || []);
                 }
             } catch (requestError) {
                 if (active) {
@@ -109,9 +112,18 @@ function Resume() {
                                         </span>
                                     </div>
                                     <p className="resume-entry-subtitle">{item.company_name}</p>
-                                    {item.description && <p className="resume-entry-description">{item.description}</p>}
+                                    {item.description && <p className="resume-entry-description resume-preserve-lines">{item.description}</p>}
                                 </div>
                             ))}
+                        </section>
+                    )}
+
+                    {skills.length > 0 && (
+                        <section className="resume-section">
+                            <h2>Skills</h2>
+                            <ul className="resume-skills">
+                                {skills.map((skill) => <li key={skill.id}>{skill.name}</li>)}
+                            </ul>
                         </section>
                     )}
 

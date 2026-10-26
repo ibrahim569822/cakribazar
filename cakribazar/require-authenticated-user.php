@@ -25,22 +25,15 @@ function require_authenticated_user($connection)
         'SELECT id, role FROM users WHERE remember_token = ? AND status = 1 AND deleted_at IS NULL LIMIT 1'
     );
     if (!$statement) {
-        error_log('Unable to prepare authenticated-user query: ' . $connection->error);
         http_response_code(500);
         echo json_encode(['status' => false, 'message' => 'Unable to authenticate user']);
         exit;
     }
 
     $statement->bind_param('s', $matches[1]);
-    if (!$statement->execute()) {
-        error_log('Unable to execute authenticated-user query: ' . $statement->error);
-        $statement->close();
-        http_response_code(500);
-        echo json_encode(['status' => false, 'message' => 'Unable to authenticate user']);
-        exit;
-    }
-
-    $user = $statement->get_result()->fetch_assoc();
+    $statement->execute();
+    $result = $statement->get_result();
+    $user = $result->fetch_assoc();
     $statement->close();
 
     if (!$user) {

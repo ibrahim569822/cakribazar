@@ -208,7 +208,14 @@ if ($type === 'education') {
     }
 }
 
-if (!$statement->execute()) {
+try {
+    $saved = $statement->execute();
+} catch (mysqli_sql_exception $error) {
+    error_log("Unable to save $type record for user $seekerId: " . $error->getMessage());
+    $statement->close();
+    history_response(500, ['status' => false, 'message' => "Unable to save $type"]);
+}
+if (!$saved) {
     error_log("Unable to save $type record: " . $statement->error);
     $statement->close();
     history_response(500, ['status' => false, 'message' => "Unable to save $type"]);
